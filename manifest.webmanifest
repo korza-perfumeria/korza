@@ -1,0 +1,23 @@
+{
+ "name": "KORZA Perfumer\u00eda",
+ "short_name": "KORZA",
+ "start_url": "./",
+ "display": "standalone",
+ "background_color": "#050505",
+ "theme_color": "#050505",
+ "lang": "es",
+ "icons": [
+  {
+   "src": "img/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "img/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  }
+ ]
+}
