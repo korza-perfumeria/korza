@@ -133,6 +133,20 @@ section{padding:38px 0}
 #cart.open ~ #toast{display:none}
 }
 </style>
+<style>
+#combo{padding:30px 0 10px}
+.cmb{position:relative;overflow:hidden;border:1px solid var(--gold);border-radius:24px;padding:28px 22px;text-align:center;background:radial-gradient(120% 90% at 50% 0,rgba(40,90,255,.28),rgba(255,255,255,.02) 60%),#0a0a0f;box-shadow:0 0 30px rgba(224,184,76,.2)}
+.cmb .tg{display:inline-block;background:#2f5bff;color:#fff;font:700 .68rem system-ui;letter-spacing:.18em;padding:5px 12px;border-radius:999px;margin-bottom:8px}
+.cmb h2{margin:0}.cmb .sub{margin:6px auto 18px}
+.cmb .tri{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:640px;margin:0 auto 18px}
+.cmb .tri div{border:1px solid var(--line);border-radius:16px;padding:12px 8px;background:rgba(255,255,255,.04)}
+.cmb .tri img{width:100%;height:110px;object-fit:contain;display:block;margin-bottom:6px}
+.cmb .tri b{display:block;font-size:.78rem;letter-spacing:.05em}.cmb .tri small{color:var(--mut)}
+.cmb .pv{font-size:clamp(2rem,7vw,2.8rem);font-weight:700;color:#fff;text-shadow:0 0 18px rgba(80,130,255,.8)}
+.cmb .old{color:var(--mut);text-decoration:line-through;margin-left:8px;font-size:1rem;font-weight:400;text-shadow:none}
+.cmb .sv{color:var(--gold);font-size:.85rem;margin:2px 0 16px}
+@media(max-width:480px){.cmb .tri img{height:84px}.cmb .tri b{font-size:.68rem}}
+</style>
 </head>
 <body>
 <canvas id="bg"></canvas><div id="pg"></div>
@@ -165,6 +179,7 @@ section{padding:38px 0}
 </div></section>
 
 <section id="quiz"><div class="wrap"><h2>Encuentra tu perfume</h2><div class="gl"></div><p class="sub">Responde 4 preguntas rápidas y te sugerimos fragancias del catálogo.</p><div class="qz" id="qz"></div><div style="text-align:center"><button class="cb" id="ab" hidden style="margin-top:16px">✨ Preguntar a la IA</button></div><div class="ai" id="ai" hidden><textarea id="aq" rows="3" maxlength="300" placeholder="Ej: algo fresco para el trabajo, de hombre, que no pase de $30.000"></textarea><button class="btn" id="ag">Pedir recomendación</button><div id="ao"></div></div></div></section>
+<section id="combo"><div class="wrap"><div class="cmb" id="cmb"></div></div></section>
 <section id="catalogo"><div class="wrap">
 <h2>Catálogo</h2><div class="gl"></div>
 <p class="sub">Elige tu perfume y el tamaño; el precio de la botella completa aparece como referencia.</p>
@@ -259,11 +274,18 @@ function det(x){
  md.querySelectorAll(".opt").forEach(function(o){o.onclick=function(){k=+o.dataset.j;md.querySelectorAll(".opt").forEach(function(q){q.classList.remove("on")});o.classList.add("on");up()}});
  up();
 }
+var CB={n:'COMBO COLEGIO',p:55000,N:['ODYSSEY AQUA','ART OF UNIVERSE','HAWAS ICE']};
+function rcb(){var e=document.getElementById('cmb'),it=CB.N.map(function(n){return S.filter(function(p){return p.n==n&&!p.off})[0]}).filter(Boolean);
+ if(it.length<CB.N.length){e.parentNode.parentNode.hidden=true;return}e.parentNode.parentNode.hidden=false;
+ var sm=it.reduce(function(a,x){return a+x.p[1]},0),ah=sm-CB.p;
+ e.innerHTML='<span class="tg">🎒 COMBO COLEGIO</span><h2>3 aromas, un solo precio</h2><p class="sub">Tres decants de 5 ml para llevar tu aroma a todos lados.</p><div class="tri">'+it.map(function(x){return'<div><img src="'+(x.img||PH)+'" alt="'+esc(x.n)+'"><b>'+esc(x.n)+'</b><small>5 ml</small></div>'}).join('')+'</div><div class="pv">'+m(CB.p)+(ah>0?'<span class="old">'+m(sm)+'</span>':'')+'</div>'+(ah>0?'<div class="sv">Ahorras '+m(ah)+'</div>':'<div class="sv"></div>')+'<button class="btn" id="cmbadd">Agregar combo al carrito</button>';
+ document.getElementById('cmbadd').onclick=function(){ev('Agregar combo',{combo:CB.n});var f=C.filter(function(i){return i.n==CB.n})[0];if(f)f.q=Math.min(20,f.q+1);else C.push({n:CB.n,s:1,q:1});sv();toast('✓ Combo Colegio agregado')}}
+function lb(i){return i.n==CB.n?'3 decants de 5 ml':Z[i.s]+' ml'}
 var C=[];try{C=JSON.parse(localStorage.getItem('kz')||'[]')}catch(e){}
-C=(Array.isArray(C)?C:[]).filter(function(i){return i&&typeof i.n=='string'&&S.some(function(p){return p.n==i.n})}).map(function(i){return{n:i.n,s:[0,1,2].indexOf(+i.s)<0?1:+i.s,q:Math.min(20,Math.max(1,Math.floor(+i.q)||1))}});
+C=(Array.isArray(C)?C:[]).filter(function(i){return i&&typeof i.n=='string'&&(i.n==CB.n||S.some(function(p){return p.n==i.n}))}).map(function(i){return{n:i.n,s:[0,1,2].indexOf(+i.s)<0?1:+i.s,q:Math.min(20,Math.max(1,Math.floor(+i.q)||1))}});
 function SS(){var a=D.p.slice(),v=document.getElementById('so').value;if(FM)a=a.filter(function(x){return FV.indexOf(x.n)>=0});if(FT)a=a.filter(function(x){return x.tags&&x.tags.indexOf(FT)>=0});if(FG)a=a.filter(function(x){return x.g==FG||x.g=='u'});if(v)a.sort(function(x,y){return v=='a'?x.p[1]-y.p[1]:y.p[1]-x.p[1]});return a}
 document.getElementById('so').onchange=render;
-function pr(i){var x=S.filter(function(p){return p.n==i.n})[0];return x?x.p[i.s]:0}
+function pr(i){if(i.n==CB.n)return CB.p;var x=S.filter(function(p){return p.n==i.n})[0];return x?x.p[i.s]:0}
 function tot(){return C.reduce(function(a,i){return a+pr(i)*i.q},0)}
 function cu(){var n=C.reduce(function(a,i){return a+i.q},0);document.getElementById('cn').textContent=n;var b=document.getElementById('bc');b.textContent=n;b.style.display=n?'block':'none'}
 function sv(){try{localStorage.setItem('kz',JSON.stringify(C))}catch(e){}cu()}
@@ -274,12 +296,12 @@ function oc0(o){cd.classList.toggle('open',o);document.body.style.overflow=o?'hi
 function oc(o){if(o){if(!OV)hp();oc0(true);document.getElementById('cx').focus()}else{OV&&cd.classList.contains('open')?history.back():oc0(false)}}
 addEventListener('popstate',function(){OV=0;cl0();oc0(false)});
 function cr(){var ci=document.getElementById('ci');ci.innerHTML=C.length?'':'<p class="sub" style="margin-top:30px">Tu carrito está vacío.<br>Agrega tus decants favoritos.</p>';
- C.forEach(function(i,n){var x=S.filter(function(p){return p.n==i.n})[0]||{};var e=document.createElement('div');e.className='it';e.innerHTML='<img src="'+(x.img||PH)+'" alt=""><div><b>'+esc(i.n)+'</b><br>'+Z[i.s]+' ml · '+m(pr(i))+'<div class="q"><button data-d="-1">−</button><span>'+i.q+'</span><button data-d="1">+</button></div></div><div>'+m(pr(i)*i.q)+'</div>';e.querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){i.q=Math.min(20,i.q+(+b.dataset.d));if(i.q<1)C.splice(n,1);sv();cr()}});ci.appendChild(e)});
+ C.forEach(function(i,n){var x=S.filter(function(p){return p.n==i.n})[0]||{};var e=document.createElement('div');e.className='it';e.innerHTML='<img src="'+(x.img||PH)+'" alt=""><div><b>'+esc(i.n)+'</b><br>'+lb(i)+' · '+m(pr(i))+'<div class="q"><button data-d="-1">−</button><span>'+i.q+'</span><button data-d="1">+</button></div></div><div>'+m(pr(i)*i.q)+'</div>';e.querySelectorAll('[data-d]').forEach(function(b){b.onclick=function(){i.q=Math.min(20,i.q+(+b.dataset.d));if(i.q<1)C.splice(n,1);sv();cr()}});ci.appendChild(e)});
  document.getElementById('tt').textContent=m(tot());uo()}
 document.getElementById('cb').onclick=function(){oc(true)};
 document.getElementById('cx').onclick=function(){oc(false)};
 document.getElementById('vc').onclick=function(){C=[];sv();cr()};
-function ot(){var NL=String.fromCharCode(10),nm=sx(document.getElementById('nm').value.trim(),60),cy=sx(document.getElementById('cy').value.trim(),60);var t='Hola KORZA, quiero hacer este pedido:'+NL+C.map(function(i){return '• '+i.n+' '+Z[i.s]+' ml x'+i.q+' — '+m(pr(i)*i.q)}).join(NL)+NL+'Total: '+m(tot())+(nm?NL+'Nombre: '+nm:'')+(cy?NL+'Ciudad: '+cy:'')+(en()?NL+'Envío estimado: '+m(nu(en().costo)):'')+NL+'¿Me envías el enlace de pago?';return t}
+function ot(){var NL=String.fromCharCode(10),nm=sx(document.getElementById('nm').value.trim(),60),cy=sx(document.getElementById('cy').value.trim(),60);var t='Hola KORZA, quiero hacer este pedido:'+NL+C.map(function(i){return '• '+i.n+' '+lb(i)+' x'+i.q+' — '+m(pr(i)*i.q)}).join(NL)+NL+'Total: '+m(tot())+(nm?NL+'Nombre: '+nm:'')+(cy?NL+'Ciudad: '+cy:'')+(en()?NL+'Envío estimado: '+m(nu(en().costo)):'')+NL+'¿Me envías el enlace de pago?';return t}
 function nz(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim()}
 function en(){var c=nz(sx(document.getElementById('cy').value,60));return c?EN.filter(function(e){return nz(e.ciudad)==c})[0]:null}
 function uo(){var a=document.getElementById('co'),e=en(),z=document.getElementById('es');z.textContent=e?'Envío estimado a '+sx(e.ciudad,40)+': '+m(nu(e.costo))+(e.dias?' · '+sx(e.dias,30):''):'';a.href='https://wa.me/'+WA+'?text='+encodeURIComponent(C.length?ot():'Hola KORZA')}
@@ -287,7 +309,7 @@ var co=document.getElementById('co');co.onclick=function(e){if(!C.length){e.prev
 ['nm','cy'].forEach(function(i){document.getElementById(i).oninput=uo});
 document.getElementById('cp').onclick=function(){if(!C.length)return;var t=ot(),ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();try{if(!ok&&navigator.clipboard){navigator.clipboard.writeText(t);ok=true}}catch(e){}toast(ok?'📋 Pedido copiado. Pégalo en WhatsApp':'No se pudo copiar')};
 document.addEventListener('keydown',function(e){if(e.key=='Escape')oc(false)});
-cu();
+cu();rcb();
 document.querySelectorAll('.dec,.steps,.faq details,.tr,.ban,#compra .pay').forEach(function(e){e.classList.add('rv')});
 var io=window.IntersectionObserver&&new IntersectionObserver(function(a){a.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
 document.querySelectorAll('.rv').forEach(function(e){if(io)io.observe(e);else e.classList.add('in')});
@@ -379,7 +401,7 @@ function apCfg(){var L=function(u,t){return /^https:\/\//.test(u||'')?'<a href="
  if(CFG.analytics&&!document.getElementById('pl')&&/^[a-z0-9.-]+$/i.test(CFG.analytics)){window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)};var e=document.createElement('script');e.id='pl';e.defer=true;e.dataset.domain=CFG.analytics;e.src='https://plausible.io/js/script.js';document.head.appendChild(e)}}
 function ld(){var e=document.getElementById('ldj');if(!e){e=document.createElement('script');e.type='application/ld+json';e.id='ldj';document.head.appendChild(e)}
  e.textContent=JSON.stringify({"@context":"https://schema.org","@type":"ItemList",itemListElement:S.filter(function(x){return !x.off}).map(function(x,i){return{"@type":"ListItem",position:i+1,item:{"@type":"Product",name:x.n,description:x.note||x.fam||('Decant de '+x.n),brand:{"@type":"Brand",name:"KORZA Perfumería"},offers:{"@type":"Offer",priceCurrency:"COP",price:x.p[1],availability:x.out?"https://schema.org/OutOfStock":"https://schema.org/InStock"}}}})}).replace(/</g,'\u003c')}
-function cargar(j){if(!j||!Array.isArray(j.p)||!j.p.length)return;CFG=j.cfg||{};EN=j.envios||[];TE=j.testimonios||[];S.length=0;j.p.forEach(function(x){S.push(x)});S.forEach(sn);C=C.filter(function(i){return S.some(function(p){return p.n==i.n})});sv();render();ini();apCfg();ld()}
+function cargar(j){if(!j||!Array.isArray(j.p)||!j.p.length)return;CFG=j.cfg||{};EN=j.envios||[];TE=j.testimonios||[];S.length=0;j.p.forEach(function(x){S.push(x)});S.forEach(sn);C=C.filter(function(i){return i.n==CB.n||S.some(function(p){return p.n==i.n})});sv();render();ini();rcb();apCfg();ld()}
 apCfg();ld();
 if(location.protocol.indexOf('http')==0){fetch('productos.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():null}).then(cargar).catch(function(){});
  if('serviceWorker' in navigator)addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
